@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Muhammad Bilal Ahsan — Flutter Developer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #09090f;
+      --surface: #111118;
+      --card: #15151e;
+      --border: rgba(255,255,255,0.07);
+      --accent: #4F8EF7;
+      --accent2: #7C5CFC;
+      --accent3: #38E8C5;
+      --text: #f0f0f5;
+      --muted: #888899;
+      --font-display: 'Syne', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-weight: 300;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* NOISE OVERLAY */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.4;
+    }
+
+    /* GLOW BLOBS */
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.12;
+    }
+    .blob-1 { width: 600px; height: 600px; background: var(--accent2); top: -200px; left: -200px; }
+    .blob-2 { width: 400px; height: 400px; background: var(--accent); bottom: 10%; right: -100px; }
+    .blob-3 { width: 300px; height: 300px; background: var(--accent3); top: 50%; left: 40%; }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 4rem;
+      background: rgba(9,9,15,0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .nav-links { display: flex; gap: 2.5rem; }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    /* MAIN CONTENT */
+    main { position: relative; z-index: 1; }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 8rem 4rem 4rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(79,142,247,0.1);
+      border: 1px solid rgba(79,142,247,0.2);
+      color: var(--accent);
+      padding: 0.35rem 1rem;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-bottom: 2rem;
+      width: fit-content;
+      animation: fadeUp 0.6s ease both;
+    }
+    .hero-tag::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--accent3);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.4); }
+    }
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 7vw, 6rem);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.6s 0.1s ease both;
+    }
+    .hero h1 .name-accent {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 50%, var(--accent3) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-sub {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 560px;
+      margin-bottom: 3rem;
+      animation: fadeUp 0.6s 0.2s ease both;
+      line-height: 1.8;
+    }
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      animation: fadeUp 0.6s 0.3s ease both;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.85rem 1.8rem;
+      border-radius: 8px;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: white;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(79,142,247,0.3); }
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-outline:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); }
+
+    .hero-stats {
+      display: flex;
+      gap: 3rem;
+      margin-top: 5rem;
+      padding-top: 3rem;
+      border-top: 1px solid var(--border);
+      animation: fadeUp 0.6s 0.4s ease both;
+    }
+    .stat-num {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .stat-label { font-size: 0.82rem; color: var(--muted); margin-top: 0.2rem; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* SECTIONS */
+    section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 6rem 4rem;
+    }
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 3.5rem;
+      line-height: 1.1;
+    }
+
+    /* EXPERIENCE */
+    .exp-grid { display: flex; flex-direction: column; gap: 1px; }
+    .exp-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem 2.5rem;
+      margin-bottom: 1rem;
+      transition: border-color 0.2s, transform 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .exp-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: linear-gradient(180deg, var(--accent), var(--accent2));
+      border-radius: 3px 0 0 3px;
+    }
+    .exp-card:hover { border-color: rgba(79,142,247,0.2); transform: translateX(4px); }
+    .exp-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem; }
+    .exp-company { font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; }
+    .exp-period {
+      font-size: 0.8rem;
+      color: var(--muted);
+      background: rgba(255,255,255,0.05);
+      padding: 0.25rem 0.75rem;
+      border-radius: 100px;
+      border: 1px solid var(--border);
+    }
+    .exp-role { color: var(--accent); font-size: 0.88rem; font-weight: 500; margin-bottom: 1.2rem; }
+    .exp-projects { display: flex; flex-direction: column; gap: 1rem; }
+    .exp-project-name { font-weight: 500; font-size: 0.92rem; margin-bottom: 0.3rem; color: var(--text); }
+    .exp-bullets { list-style: none; }
+    .exp-bullets li {
+      font-size: 0.88rem;
+      color: var(--muted);
+      padding: 0.2rem 0 0.2rem 1.2rem;
+      position: relative;
+    }
+    .exp-bullets li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--accent3);
+      font-size: 0.75rem;
+      top: 0.28rem;
+    }
+
+    /* PROJECTS */
+    .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+    .project-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .project-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(79,142,247,0.04), rgba(124,92,252,0.04));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .project-card:hover { border-color: rgba(79,142,247,0.25); transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+    .project-card:hover::after { opacity: 1; }
+    .project-icon {
+      width: 48px; height: 48px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      margin-bottom: 1.2rem;
+    }
+    .project-name { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; margin-bottom: 0.5rem; }
+    .project-desc { font-size: 0.88rem; color: var(--muted); line-height: 1.7; margin-bottom: 1.2rem; }
+    .project-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .tag {
+      font-size: 0.72rem;
+      font-weight: 500;
+      padding: 0.2rem 0.65rem;
+      border-radius: 100px;
+      background: rgba(79,142,247,0.1);
+      color: var(--accent);
+      border: 1px solid rgba(79,142,247,0.15);
+    }
+    .tag.green { background: rgba(56,232,197,0.1); color: var(--accent3); border-color: rgba(56,232,197,0.15); }
+    .tag.purple { background: rgba(124,92,252,0.1); color: #a78bfa; border-color: rgba(124,92,252,0.15); }
+
+    /* SKILLS */
+    .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+    .skill-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-size: 0.88rem;
+      font-weight: 400;
+      transition: all 0.2s;
+    }
+    .skill-item:hover { border-color: rgba(79,142,247,0.2); background: rgba(79,142,247,0.04); }
+    .skill-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      flex-shrink: 0;
+    }
+
+    /* CONTACT */
+    .contact-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .contact-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%; transform: translateX(-50%);
+      width: 400px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    }
+    .contact-box h2 {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+    .contact-box p { color: var(--muted); margin-bottom: 2.5rem; max-width: 400px; margin-left: auto; margin-right: auto; }
+    .contact-links { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .contact-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      color: var(--text);
+      transition: all 0.2s;
+      background: rgba(255,255,255,0.03);
+    }
+    .contact-link:hover { border-color: rgba(79,142,247,0.3); color: var(--accent); background: rgba(79,142,247,0.06); }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 2rem;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    /* SCROLL ANIMATIONS */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { gap: 1.5rem; }
+      .hero, section { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .hero { padding-top: 7rem; }
+      .hero-stats { gap: 1.5rem; flex-wrap: wrap; }
+      .contact-box { padding: 2.5rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">Bilal Ahsan</div>
+    <div class="nav-links">
+      <a href="#experience">Experience</a>
+      <a href="#projects">Projects</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-tag">Available for opportunities</div>
+      <h1>
+        Hi, I'm<br/>
+        <span class="name-accent">Bilal Ahsan</span>
+      </h1>
+      <p class="hero-sub">
+        Flutter & Android Developer with 1+ year of experience building scalable, production-ready mobile applications. Based in Islamabad, Pakistan.
+      </p>
+      <div class="hero-cta">
+        <a href="#contact" class="btn btn-primary">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Get In Touch
+        </a>
+        <a href="https://github.com/bilalahsan08" target="_blank" class="btn btn-outline">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          View GitHub
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="stat-num">1+</div>
+          <div class="stat-label">Years Experience</div>
+        </div>
+        <div>
+          <div class="stat-num">4+</div>
+          <div class="stat-label">Production Apps</div>
+        </div>
+        <div>
+          <div class="stat-num">5+</div>
+          <div class="stat-label">Projects Built</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXPERIENCE -->
+    <section id="experience">
+      <div class="reveal">
+        <div class="section-label">Career</div>
+        <div class="section-title">Work Experience</div>
+      </div>
+      <div class="exp-grid reveal">
+        <div class="exp-card">
+          <div class="exp-header">
+            <div class="exp-company">Khas Technology Solutions</div>
+            <div class="exp-period">Nov 2025 – Present</div>
+          </div>
+          <div class="exp-role">Flutter & Android Developer</div>
+          <div class="exp-projects">
+            <div>
+              <div class="exp-project-name">⚡ SplitBeat – AI Vocal Remover</div>
+              <ul class="exp-bullets">
+                <li>Flutter-based audio processing app for separating vocals and instrumentals</li>
+                <li>Multilingual support and Android media handling</li>
+              </ul>
+            </div>
+            <div>
+              <div class="exp-project-name">🎬 CineLens – Movie Discovery Platform</div>
+              <ul class="exp-bullets">
+                <li>Movie discovery app with external API integration, search and filtering</li>
+                <li>Responsive UI with JSON parsing and clean architecture</li>
+              </ul>
+            </div>
+            <div>
+              <div class="exp-project-name">🤖 Future Face – AI Photo Transformation</div>
+              <ul class="exp-bullets">
+                <li>AI-powered Flutter app for photo transformation and aging effects</li>
+                <li>Firebase Analytics, Crashlytics, Cloud Messaging, and AdMob integration</li>
+              </ul>
+            </div>
+            <div>
+              <div class="exp-project-name">📹 VR Video Converter</div>
+              <ul class="exp-bullets">
+                <li>Cross-platform video conversion app with background file handling</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects">
+      <div class="reveal">
+        <div class="section-label">Work</div>
+        <div class="section-title">Featured Projects</div>
+      </div>
+      <div class="projects-grid">
+        <div class="project-card reveal">
+          <div class="project-icon">💪</div>
+          <div class="project-name">Fit Fusion</div>
+          <div class="project-desc">A complete fitness & wellness app with personalized workout plans, exercise tracking, step counter using device sensors, and doctor appointment booking.</div>
+          <div class="project-tags">
+            <span class="tag">Flutter</span>
+            <span class="tag green">Firebase</span>
+            <span class="tag purple">Final Year Project</span>
+          </div>
+        </div>
+        <div class="project-card reveal">
+          <div class="project-icon">🎵</div>
+          <div class="project-name">SplitBeat</div>
+          <div class="project-desc">AI-powered vocal remover app that separates vocals and instrumentals from any audio track. Features multilingual support and seamless Android media handling.</div>
+          <div class="project-tags">
+            <span class="tag">Flutter</span>
+            <span class="tag green">Audio Processing</span>
+            <span class="tag">Android</span>
+          </div>
+        </div>
+        <div class="project-card reveal">
+          <div class="project-icon">🎭</div>
+          <div class="project-name">Future Face</div>
+          <div class="project-desc">AI photo transformation app with aging effects and visual filters. Integrated Firebase Analytics, Crashlytics, AdMob, and Cloud Messaging.</div>
+          <div class="project-tags">
+            <span class="tag">Flutter</span>
+            <span class="tag green">Firebase</span>
+            <span class="tag purple">AI</span>
+          </div>
+        </div>
+        <div class="project-card reveal">
+          <div class="project-icon">🎬</div>
+          <div class="project-name">CineLens</div>
+          <div class="project-desc">Movie discovery platform consuming live movie APIs. Features search, filtering, detailed movie views, and a clean responsive UI.</div>
+          <div class="project-tags">
+            <span class="tag">Flutter</span>
+            <span class="tag green">REST API</span>
+            <span class="tag">GetX</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills">
+      <div class="reveal">
+        <div class="section-label">Stack</div>
+        <div class="section-title">Technical Skills</div>
+      </div>
+      <div class="skills-grid reveal">
+        <div class="skill-item"><div class="skill-dot"></div>Flutter & Dart</div>
+        <div class="skill-item"><div class="skill-dot"></div>Firebase Suite</div>
+        <div class="skill-item"><div class="skill-dot"></div>REST APIs & JSON</div>
+        <div class="skill-item"><div class="skill-dot"></div>GetX & Provider</div>
+        <div class="skill-item"><div class="skill-dot"></div>SQLite & Hive</div>
+        <div class="skill-item"><div class="skill-dot"></div>Android Native</div>
+        <div class="skill-item"><div class="skill-dot"></div>Google Play Store</div>
+        <div class="skill-item"><div class="skill-dot"></div>Git & GitHub</div>
+        <div class="skill-item"><div class="skill-dot"></div>Push Notifications</div>
+        <div class="skill-item"><div class="skill-dot"></div>Localization</div>
+        <div class="skill-item"><div class="skill-dot"></div>VS Code & Android Studio</div>
+        <div class="skill-item"><div class="skill-dot"></div>AdMob Monetization</div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+      <div class="contact-box reveal">
+        <h2>Let's Build Something</h2>
+        <p>Open to new opportunities, freelance projects, and collaborations. Drop me a message.</p>
+        <div class="contact-links">
+          <a href="mailto:bilalahsanbilalahsan3@gmail.com" class="contact-link">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            bilalahsanbilalahsan3@gmail.com
+          </a>
+          <a href="https://github.com/bilalahsan08" target="_blank" class="contact-link">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+            GitHub
+          </a>
+          <a href="https://linkedin.com/in/bilal-ahsan-2a97b5299" target="_blank" class="contact-link">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            LinkedIn
+          </a>
+          <a href="tel:+923039828565" class="contact-link">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.21h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.77a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            +92-303-9828565
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>© 2025 Muhammad Bilal Ahsan · Islamabad, Pakistan · Built with ❤️</p>
+  </footer>
+
+  <script>
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+  </script>
+
+</body>
+</html>
